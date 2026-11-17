@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusVote - School & College Elections</title>
+    <link rel="stylesheet" href="f3.css">
+    <!-- FontAwesome for friendly icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for simple results graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="light-mode">
+    
+    <!-- Toast Alerts Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-brand"><i class="fas fa-check-circle"></i> CampusVote</div>
+        <div class="nav-actions">
+            <button id="theme-toggle" class="btn-icon"><i class="fas fa-moon"></i></button>
+            <button id="logout-btn" class="btn btn-outline hidden">Log Out <i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="container">
+        
+        <!-- SECTION 1: LANDING PAGE -->
+        <section id="landing-view" class="view">
+            <div class="hero">
+                <span class="hero-tag">Simple & Safe Voting</span>
+                <h1>Easy Digital Elections for Your Campus</h1>
+                <p>Create, manage, and vote in your student council, class representative, and club president elections without any paperwork.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary navigate-login" data-role="student">Student Login <i class="fas fa-user-graduate"></i></button>
+                    <button class="btn btn-secondary navigate-login" data-role="admin">Admin Login <i class="fas fa-user-shield"></i></button>
+                </div>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-user-check" style="color: #6c5ce7;"></i>
+                    <h3>One Vote Per Student</h3>
+                    <p>The system makes sure every student can cast exactly one vote fairly.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-eye-slash" style="color: #00b894;"></i>
+                    <h3>Hidden Results</h3>
+                    <p>Votes stay completely private and hidden until the admin ends the election.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-pie" style="color: #ff7675;"></i>
+                    <h3>Beautiful Graphs</h3>
+                    <p>See who won instantly with easy-to-read visual result charts.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: LOGIN PAGE -->
+        <section id="login-view" class="view hidden">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2>Welcome Back</h2>
+                    <p id="login-title">Please Sign In</p>
+                </div>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" required placeholder="Enter username...">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required placeholder="••••••••">
+                        <span class="error-msg" id="login-error"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Log In</button>
+                </form>
+                <button class="btn btn-text btn-block back-to-landing"><i class="fas fa-arrow-left"></i> Go Back Home</button>
+            </div>
+        </section>
+
+        <!-- SECTION 3: STUDENT DASHBOARD -->
+        <section id="student-view" class="view hidden">
+            <header class="dash-header">
+                <div>
+                    <h2>Hi, <span id="student-name" class="highlight-text">Student</span>! 👋</h2>
+                    <p>Check out active elections or view your past voting history below.</p>
+                </div>
+            </header>
+
+            <div class="dash-tabs">
+                <button class="tab-btn active" data-tab="student-active-tab"><i class="fas fa-vote-yea"></i> Active Elections</button>
+                <button class="tab-btn" data-tab="student-history-tab"><i class="fas fa-history"></i> My Voting History</button>
+            </div>
+
+            <div id="student-active-tab" class="tab-content">
+                <div class="filter-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="student-search" placeholder="Search elections by name or type...">
+                </div>
+                <div id="active-elections-container" class="cards-grid">
+                    <!-- Cards will appear here dynamically -->
+                </div>
+            </div>
+
+            <div id="student-history-tab" class="tab-content hidden">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Election Name</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Action Taken</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-history-rows">
+                            <!-- Rows will appear here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: ADMIN DASHBOARD -->
+        <section id="admin-view" class="view hidden">
+            <header class="dash-header">
+                <div>
+                    <h2>Admin Dashboard 🛠️</h2>
+                    <p>Create new elections, change statuses, and view live turnout numbers.</p>
+                </div>
+                <button id="open-modal-btn" class="btn btn-primary"><i class="fas fa-plus"></i> Create New Election</button>
+            </header>
+
+            <!-- Friendly Metrics Grid -->
+            <div class="metrics-grid">
+                <div class="metric-card pink">
+                    <span class="metric-title">Live Elections</span>
+                    <span id="metric-active" class="metric-value">0</span>
+                </div>
+                <div class="metric-card mint">
+                    <span class="metric-title">Voter Turnout</span>
+                    <span id="metric-turnout" class="metric-value">0%</span>
+                </div>
+                <div class="metric-card purple">
+                    <span class="metric-title">Total Registered Students</span>
+                    <span id="metric-voters" class="metric-value">0</span>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <h3 style="padding: 1.2rem;">All Campus Elections</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Election Name</th>
+                            <th>Type</th>
+                            <th>Candidates</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                            <th>Results Visibility</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-election-rows">
+                        <!-- Rows will appear here dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL: CREATE ELECTION -->
+    <div id="election-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Create an Election</h3>
+                <button id="close-modal-btn" class="btn-icon"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="create-election-form">
+                <div class="form-group">
+                    <label for="el-title">Election Title</label>
+                    <input type="text" id="el-title" required placeholder="e.g., Class Representative (CR)">
+                </div>
+                <div class="form-group">
+                    <label for="el-type">Election Type</label>
+                    <select id="el-type">
+                        <option value="Student Council">Student Council</option>
+                        <option value="Class Representative">Class Representative (CR)</option>
+                        <option value="House Captain">House Captain</option>
+                        <option value="Club President">Club President</option>
+                        <option value="School Prefect">School Prefect</option>
+                    </select>
+                </div>
+
+                <div class="modal-section-header">
+                    <h4>Candidates</h4>
+                    <button type="button" id="add-candidate-row-btn" class="btn btn-outline btn-sm"><i class="fas fa-user-plus"></i> Add Candidate</button>
+                </div>
+                
+                <div id="dynamic-candidates-list">
+                    <!-- Input blocks appended here dynamically -->
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1.5rem;">Launch Election</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="f3.js"></script>
+</body>
+</html>
